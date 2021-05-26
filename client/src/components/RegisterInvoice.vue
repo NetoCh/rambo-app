@@ -19,8 +19,10 @@
             type="number"
             :counter="10"
             label="UPC"
+            ref="upc"
             required
             clearable
+            v-on:keyup.enter="$refs.cantidad.focus()"
           ></v-text-field>
         </v-col>
         <v-col cols="12" lg="2" sm="12">
@@ -29,6 +31,7 @@
             type="number"
             :counter="10"
             label="Cantidad"
+            ref="cantidad"
             required
             clearable
           ></v-text-field>
@@ -125,6 +128,7 @@ export default {
               .then(() => {
                 self.upc = null;
                 self.amount = null;
+                self.$refs.upc.focus();
               });
           })
           .catch(function (error) {
@@ -139,6 +143,7 @@ export default {
           .then(() => {
             self.upc = null;
             self.amount = null;
+            self.$refs.upc.focus();
           });
       }
     },
@@ -202,7 +207,7 @@ export default {
         },
         { merge: true }
       );
-    },
+    }
   },
   created() {
     const docId = this.$route.params.id;
