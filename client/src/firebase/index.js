@@ -8,14 +8,14 @@ import "firebase/firestore";
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBPldRzsaGCQ1HGv2-PIimmqSVDhv9age4",
-    authDomain: "bdd-app-96ce7.firebaseapp.com",
-    projectId: "bdd-app-96ce7",
-    storageBucket: "bdd-app-96ce7.appspot.com",
-    messagingSenderId: "17162751595",
-    appId: "1:17162751595:web:73170e5c3681f814b2eb2e",
-    measurementId: "G-RSKBVPHV41"
-};
+    apiKey: "AIzaSyAIOaWoJvaxq2WHme0cEbJt6Z_7FbSAxEc",
+    authDomain: "rambo-app-5629e.firebaseapp.com",
+    projectId: "rambo-app-5629e",
+    storageBucket: "rambo-app-5629e.appspot.com",
+    messagingSenderId: "920782818306",
+    appId: "1:920782818306:web:11b55a98d63b8989202b1b",
+    measurementId: "G-S3S87XTZ1L"
+  };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
