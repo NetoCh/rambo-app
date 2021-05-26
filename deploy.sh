@@ -20,6 +20,6 @@ cd server
 
 git add .
 git commit -m "$comment - Push to Production Repository"
-git push origin master
+git push heroku master
 
 echo "¡Deploy Finalizado!"

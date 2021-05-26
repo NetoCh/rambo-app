@@ -35,10 +35,11 @@ export default {
       search: "",
       headers: [
         {
-          text: "id",
+          text: "ID",
           align: "start",
           value: "id",
         },
+        { text: "Nombre", value: "invoiceName" },
         { text: "Fecha", value: "time" },
         { text: "Accions", value: "actions" },
       ],
@@ -143,13 +144,14 @@ export default {
           });
           if (list.length <= 0) return;
           const download = document.getElementById("download");
+          const downloadName = row.invoiceName ? row.invoiceName : row.id;
           let tsv = "";
           list.forEach((item) => {
-            tsv += `${item.upc}\t${item.amount}\n`;
+            tsv += `${item.upc}\u0009${item.amount}\u000A`;
           });
           download.href =
             "data:text/tab-separated-values," + encodeURIComponent(tsv);
-          download.download = `${row.id}.txt`;
+          download.download = `${downloadName}.txt`;
           download.click();
         });
     },
@@ -162,10 +164,11 @@ export default {
       .then((querySnapshot) => {
         let list = [];
         querySnapshot.forEach((doc) => {
-          const { createdAt } = doc.data();
+          const { createdAt, invoiceName } = doc.data();
           const date = new Date(createdAt.toDate());
           list.push({
             id: doc.id,
+            invoiceName,
             time: date.toLocaleDateString() + " " + date.toLocaleTimeString(),
           });
         });

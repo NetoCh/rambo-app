@@ -2,7 +2,18 @@
   <v-container>
     <v-form>
       <v-row>
-        <v-col cols="true">
+        <v-col cols="12" lg="5" sm="12">
+          <v-text-field
+            v-model="invoice.invoiceName"
+            :counter="10"
+            label="Nombre"
+            @blur="updateInvoiceName()"
+            required
+            filled
+            clearable
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" lg="4" sm="12">
           <v-text-field
             v-model="upc"
             :counter="10"
@@ -11,9 +22,10 @@
             clearable
           ></v-text-field>
         </v-col>
-        <v-col cols="true">
+        <v-col cols="12" lg="2" sm="12">
           <v-text-field
             v-model="amount"
+            type="number"
             :counter="10"
             label="Cantidad"
             required
@@ -26,7 +38,7 @@
           >
         </v-col>
       </v-row>
-      <v-row v-if="productList.length > 0">
+      <v-row>
         <v-col>
           <v-card>
             <v-card-title v-if="docId"
@@ -37,10 +49,11 @@
                 color="primary"
                 large
                 @click="downloadTsv"
+                v-if="productList.length > 0"
                 >mdi-download</v-icon
               ></v-card-title
             >
-            <v-list subheader two-line>
+            <v-list subheader two-line v-if="productList.length > 0">
               <v-list-item-group>
                 <v-list-item v-for="row in productList" :key="row.id">
                   <v-list-item-content>
@@ -61,6 +74,11 @@
         </v-col>
       </v-row>
     </v-form>
+    <v-row v-if="docId">
+      <v-col>
+        <v-btn elevation="2" @click="deleteInvoice()">Eliminar Factura</v-btn>
+      </v-col>
+    </v-row>
     <a id="download" href="" src="" style="display: none" />
   </v-container>
 </template>
@@ -73,6 +91,10 @@ export default {
   data() {
     return {
       docId: null,
+      invoice:{
+        invoiceName: null,
+        createdAt: null
+      },
       upc: null,
       amount: null,
       productList: [],
@@ -90,7 +112,7 @@ export default {
       };
       if (this.docId === null) {
         db.collection("invoices")
-          .add({ createdAt })
+          .add({ invoiceName: self.invoice.invoiceName, createdAt })
           .then(function (docRef) {
             self.docId = docRef.id;
             self.getProductList();
@@ -130,8 +152,14 @@ export default {
       if (this.docId === null) return;
       db.collection("invoices")
         .doc(this.docId)
+        .onSnapshot((doc) => {
+          if(doc.exists)
+            this.invoice = doc.data();
+        });
+      db.collection("invoices")
+        .doc(this.docId)
         .collection("invoice")
-        .orderBy("createdAt", "asc")
+        .orderBy("createdAt", "desc")
         .onSnapshot((querySnapshot) => {
           let list = [];
           querySnapshot.forEach((doc) => {
@@ -142,17 +170,37 @@ export default {
           this.productList = list;
         });
     },
+    deleteInvoice() {
+      const self = this;
+      if (self.docId === null) return;
+      db.collection("invoices")
+        .doc(self.docId)
+        .delete()
+        .then(() => {
+          self.$router.push("/");
+        });
+    },
     downloadTsv() {
       if (this.productList.length <= 0) return;
       const download = document.getElementById("download");
+      const downloadName = this.invoice.invoiceName ? this.invoice.invoiceName  : this.docId;
       let tsv = "";
       this.productList.forEach((item) => {
-        tsv += `${item.upc}\t${item.amount}\n`;
+        tsv += `${item.upc}\u0009${item.amount}\u000A`;
       });
       download.href =
         "data:text/tab-separated-values," + encodeURIComponent(tsv);
-      download.download = `${this.docId}.txt`;
+      download.download = `${downloadName}.txt`;
       download.click();
+    },
+    updateInvoiceName() {
+      if (this.invoice.invoiceName === null || this.docId === null) return;
+      db.collection("invoices").doc(this.docId).set(
+        {
+          invoiceName: this.invoice.invoiceName,
+        },
+        { merge: true }
+      );
     },
   },
   created() {
