@@ -147,7 +147,7 @@ export default {
           const downloadName = row.invoiceName ? row.invoiceName : row.id;
           let tsv = "";
           list.forEach((item) => {
-            tsv += `${item.upc}\u0009${item.amount}\u000A`;
+            tsv += `${item.upc}\u0009${item.amount}\u000D\u000A`;
           });
           download.href =
             "data:text/tab-separated-values," + encodeURIComponent(tsv);

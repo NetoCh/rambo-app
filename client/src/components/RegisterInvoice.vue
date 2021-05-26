@@ -186,7 +186,7 @@ export default {
       const downloadName = this.invoice.invoiceName ? this.invoice.invoiceName  : this.docId;
       let tsv = "";
       this.productList.forEach((item) => {
-        tsv += `${item.upc}\u0009${item.amount}\u000A`;
+        tsv += `${item.upc}\u0009${item.amount}\u000D\u000A`;
       });
       download.href =
         "data:text/tab-separated-values," + encodeURIComponent(tsv);
