@@ -146,6 +146,11 @@ export default {
             self.$refs.upc.focus();
           });
       }
+      if (window.navigator.onLine === false){
+        self.upc = null;
+        self.amount = null;
+        self.$refs.upc.focus();
+      }
     },
     deleteProduct(id) {
       db.collection("invoices")
