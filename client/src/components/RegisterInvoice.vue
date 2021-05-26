@@ -16,6 +16,7 @@
         <v-col cols="12" lg="4" sm="12">
           <v-text-field
             v-model="upc"
+            type="number"
             :counter="10"
             label="UPC"
             required
