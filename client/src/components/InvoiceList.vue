@@ -54,7 +54,7 @@ export default {
       db.collection("invoices")
         .doc(row.id)
         .collection("invoice")
-        .orderBy("createdAt", "desc")
+        .orderBy("createdAt", "asc")
         .onSnapshot((querySnapshot) => {
           let list = [];
           querySnapshot.forEach((doc) => {

@@ -46,7 +46,7 @@
         <v-col>
           <v-card>
             <v-card-title v-if="docId"
-              >{{ docId }}
+              >{{ docId }} ({{totals}})
               <v-icon
                 type="button"
                 style="margin-left: 1rem"
@@ -170,7 +170,7 @@ export default {
       db.collection("invoices")
         .doc(this.docId)
         .collection("invoice")
-        .orderBy("createdAt", "desc")
+        .orderBy("createdAt", "asc")
         .onSnapshot((querySnapshot) => {
           let list = [];
           querySnapshot.forEach((doc) => {
@@ -219,5 +219,10 @@ export default {
     if (docId) this.docId = docId;
     this.getProductList();
   },
+  computed:{
+    totals(){
+      return this.productList.length ;
+    }
+  }
 };
 </script>
