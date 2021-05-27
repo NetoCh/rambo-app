@@ -46,7 +46,7 @@
         <v-col>
           <v-card>
             <v-card-title v-if="docId"
-              >{{ docId }} ({{totals}})
+              >{{ docId }} ({{ totals }})
               <v-icon
                 type="button"
                 style="margin-left: 1rem"
@@ -95,9 +95,9 @@ export default {
   data() {
     return {
       docId: null,
-      invoice:{
+      invoice: {
         invoiceName: null,
-        createdAt: null
+        createdAt: null,
       },
       upc: null,
       amount: null,
@@ -115,25 +115,24 @@ export default {
         createdAt,
       };
       if (this.docId === null) {
-        db.collection("invoices")
-          .add({ invoiceName: self.invoice.invoiceName, createdAt })
-          .then(function (docRef) {
-            self.docId = docRef.id;
-            self.getProductList();
-            db.collection("invoices")
-              .doc(self.docId)
-              .collection("invoice")
-              .doc()
-              .set(model)
-              .then(() => {
-                self.upc = null;
-                self.amount = null;
-                self.$refs.upc.focus();
-              });
-          })
-          .catch(function (error) {
-            console.error("Error adding document: ", error);
-          });
+        try {
+          const ref = db.collection("invoices").doc();
+          ref.set({ invoiceName: self.invoice.invoiceName, createdAt });
+          self.docId = ref.id;
+          self.getProductList();
+          db.collection("invoices")
+            .doc(self.docId)
+            .collection("invoice")
+            .doc()
+            .set(model)
+            .then(() => {
+              self.upc = null;
+              self.amount = null;
+              self.$refs.upc.focus();
+            });
+        } catch (err) {
+          console.log("Error adding document: ", err);
+        }
       } else {
         db.collection("invoices")
           .doc(this.docId)
@@ -146,7 +145,7 @@ export default {
             self.$refs.upc.focus();
           });
       }
-      if (window.navigator.onLine === false){
+      if (window.navigator.onLine === false) {
         self.upc = null;
         self.amount = null;
         self.$refs.upc.focus();
@@ -164,8 +163,7 @@ export default {
       db.collection("invoices")
         .doc(this.docId)
         .onSnapshot((doc) => {
-          if(doc.exists)
-            this.invoice = doc.data();
+          if (doc.exists) this.invoice = doc.data();
         });
       db.collection("invoices")
         .doc(this.docId)
@@ -194,7 +192,9 @@ export default {
     downloadTsv() {
       if (this.productList.length <= 0) return;
       const download = document.getElementById("download");
-      const downloadName = this.invoice.invoiceName ? this.invoice.invoiceName  : this.docId;
+      const downloadName = this.invoice.invoiceName
+        ? this.invoice.invoiceName
+        : this.docId;
       let tsv = "";
       this.productList.forEach((item) => {
         tsv += `${item.upc}\u0009${item.amount}\u000D\u000A`;
@@ -212,17 +212,17 @@ export default {
         },
         { merge: true }
       );
-    }
+    },
   },
   created() {
     const docId = this.$route.params.id;
     if (docId) this.docId = docId;
     this.getProductList();
   },
-  computed:{
-    totals(){
-      return this.productList.length ;
-    }
-  }
+  computed: {
+    totals() {
+      return this.productList.length;
+    },
+  },
 };
 </script>

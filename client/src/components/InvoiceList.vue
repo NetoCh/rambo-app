@@ -80,16 +80,16 @@ export default {
     const self = this;
     db.collection("invoices")
       .orderBy("createdAt", "desc")
-      .get()
-      .then((querySnapshot) => {
+      .onSnapshot((querySnapshot) => {
         let list = [];
         querySnapshot.forEach((doc) => {
           const { createdAt, invoiceName } = doc.data();
-          const date = new Date(createdAt.toDate());
+          const date = createdAt ? new Date(createdAt.toDate()) : null;
+          const time = date ? date.toLocaleDateString() + " " + date.toLocaleTimeString() : "Offline";
           list.push({
             id: doc.id,
             invoiceName,
-            time: date.toLocaleDateString() + " " + date.toLocaleTimeString(),
+            time,
           });
         });
         self.list = list;
